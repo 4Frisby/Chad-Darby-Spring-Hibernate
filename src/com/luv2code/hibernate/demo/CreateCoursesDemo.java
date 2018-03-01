@@ -7,10 +7,8 @@ import org.hibernate.cfg.Configuration;
 import com.luv2code.hibernate.demo.entity.Course;
 import com.luv2code.hibernate.demo.entity.Instructor;
 import com.luv2code.hibernate.demo.entity.InstructorDetail;
-import com.luv2code.hibernate.demo.entity.Review;
-import com.luv2code.hibernate.demo.entity.Student;
 
-public class DeleteMaryStudentDemo {
+public class CreateCoursesDemo {
 
 	public static void main(String[] args) {
 
@@ -20,8 +18,6 @@ public class DeleteMaryStudentDemo {
 								.addAnnotatedClass(Instructor.class)
 								.addAnnotatedClass(InstructorDetail.class)
 								.addAnnotatedClass(Course.class)
-								.addAnnotatedClass(Review.class)
-								.addAnnotatedClass(Student.class)
 								.buildSessionFactory();
 		
 		// create session
@@ -31,17 +27,22 @@ public class DeleteMaryStudentDemo {
 			
 			// start a transaction
 			session.beginTransaction();
-				
-			// get the student from database
-			int studentId = 2;
-			Student tempStudent = session.get(Student.class, studentId);
 			
-			System.out.println("\nLoaded student: " + tempStudent);
-			System.out.println("Courses: " + tempStudent.getCourses());		
-		
-			// delete student
-			System.out.println("\nDeleting student: " + tempStudent);
-			session.delete(tempStudent);
+			// get the instructor from db
+			int theId = 1;
+			Instructor tempInstructor = session.get(Instructor.class, theId);		
+			
+			// create some courses
+			Course tempCourse1 = new Course("Air Guitar - The Ultimate Guide");
+			Course tempCourse2 = new Course("The Pinball Masterclass");
+			
+			// add courses to instructor
+			tempInstructor.add(tempCourse1);
+			tempInstructor.add(tempCourse2);
+			
+			// save the courses
+			session.save(tempCourse1);
+			session.save(tempCourse2);
 			
 			// commit transaction
 			session.getTransaction().commit();

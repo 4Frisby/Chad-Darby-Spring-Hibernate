@@ -1,15 +1,14 @@
 package com.luv2code.hibernate.demo;
 
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import com.luv2code.hibernate.demo.entity.Course;
 import com.luv2code.hibernate.demo.entity.Instructor;
 import com.luv2code.hibernate.demo.entity.InstructorDetail;
-import com.luv2code.hibernate.demo.entity.Review;
 
-public class CreateCourseAndReviewsDemo {
+public class DeleteInstructorDetailDemo {
 
 	public static void main(String[] args) {
 
@@ -18,8 +17,6 @@ public class CreateCourseAndReviewsDemo {
 								.configure("hibernate.cfg.xml")
 								.addAnnotatedClass(Instructor.class)
 								.addAnnotatedClass(InstructorDetail.class)
-								.addAnnotatedClass(Course.class)
-								.addAnnotatedClass(Review.class)
 								.buildSessionFactory();
 		
 		// create session
@@ -29,31 +26,40 @@ public class CreateCourseAndReviewsDemo {
 			
 			// start a transaction
 			session.beginTransaction();
+
+			// get the instructor detail object
+			int theId = 3;
+			InstructorDetail tempInstructorDetail = 
+					session.get(InstructorDetail.class, theId);
 			
-			
-			// create a course
-			Course tempCourse = new Course("Pacman - How To Score One Million Points");
-			
-			// add some reviews
-			tempCourse.addReview(new Review("Great course ... loved it!"));
-			tempCourse.addReview(new Review("Cool course, job well done"));
-			tempCourse.addReview(new Review("What a dumb course, you are an idiot!"));
+			// print the instructor detail
+			System.out.println("tempInstructorDetail: " + tempInstructorDetail);
 						
-			// save the course ... and leverage the cascade all :-)
-			System.out.println("Saving the course");
-			System.out.println(tempCourse);
-			System.out.println(tempCourse.getReviews());
+			// print  the associated instructor
+			System.out.println("the associated instructor: " + 
+								tempInstructorDetail.getInstructor());
 			
-			session.save(tempCourse);
+			// now let's delete the instructor detail
+			System.out.println("Deleting tempInstructorDetail: " 
+											+ tempInstructorDetail);
+
+			// remove the associated object reference
+			// break bi-directional link
+			
+			tempInstructorDetail.getInstructor().setInstructorDetail(null);
+			
+			session.delete(tempInstructorDetail);
 			
 			// commit transaction
 			session.getTransaction().commit();
 			
 			System.out.println("Done!");
 		}
+		catch (Exception exc) {
+			exc.printStackTrace();
+		}
 		finally {
-			
-			// add clean up code
+			// handle connection leak issue
 			session.close();
 			
 			factory.close();
