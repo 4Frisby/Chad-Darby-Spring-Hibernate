@@ -42,6 +42,10 @@ public class Course {
 	@JoinColumn(name="instructor_id")
 	private Instructor instructor;
 	
+	
+	//if course gets deleted, modified reflect the changes to the reviews(delete all the reviews, change content etc.) also.
+	// but the opposite are not required, so mapping is only uni directional(which means course to review, review changes is not a concern of course) 
+	// if it was neccessary, we would create a field of Course class in the review class, which makes it unidirectional.
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="course_id")
 	private List<Review> reviews;
